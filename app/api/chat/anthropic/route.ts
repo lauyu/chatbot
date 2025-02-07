@@ -60,27 +60,16 @@ export async function POST(request: NextRequest) {
     })
 
     try {
-      // const response = await anthropic.messages.create({
-      //   model: chatSettings.model,
-      //   messages: ANTHROPIC_FORMATTED_MESSAGES,
-      //   temperature: chatSettings.temperature,
-      //   system: messages[0].content,
-      //   max_tokens:
-      //     CHAT_SETTING_LIMITS[chatSettings.model].MAX_TOKEN_OUTPUT_LENGTH,
-      //   stream: true
-      // })
-      console.log("【user】"+JSON.stringify(messages.at(-1)))
-      const response = await fetch("http://127.0.0.1:8000/claude/chat", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'text',
-          message: messages.at(-1).content,
-          session_id: profile.user_id
-        })
+      const response = await anthropic.messages.create({
+        model: chatSettings.model,
+        messages: ANTHROPIC_FORMATTED_MESSAGES,
+        temperature: chatSettings.temperature,
+        system: messages[0].content,
+        max_tokens:
+          CHAT_SETTING_LIMITS[chatSettings.model].MAX_TOKEN_OUTPUT_LENGTH,
+        stream: true
       })
+
       try {
         const stream = AnthropicStream(response)
         return new StreamingTextResponse(stream)
