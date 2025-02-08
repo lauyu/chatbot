@@ -69,46 +69,46 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
     if (params.chatid) {
       fetchData().then(() => {
         handleFocusChatInput()
-          setLoading(false)
-        })
-      } else {
         setLoading(false)
-      }
-    }, [])
-  
-    const fetchMessages = async () => {
-      const fetchedMessages = await getMessagesByChatId(params.chatid as string)
-  
-      const imagePromises: Promise<MessageImage>[] = fetchedMessages.flatMap(
-        message =>
-          message.image_paths
-            ? message.image_paths.map(async imagePath => {
-                const url = await getMessageImageFromStorage(imagePath)
-  
-                if (url) {
-                  const response = await fetch(url)
-                  const blob = await response.blob()
-                  const base64 = await convertBlobToBase64(blob)
-  
-                  return {
-                    messageId: message.id,
-                    path: imagePath,
-                    base64,
-                    url,
-                    file: null
-                  }
-                }
-  
+      })
+    } else {
+      setLoading(false)
+    }
+  }, [])
+
+  const fetchMessages = async () => {
+    const fetchedMessages = await getMessagesByChatId(params.chatid as string)
+
+    const imagePromises: Promise<MessageImage>[] = fetchedMessages.flatMap(
+      message =>
+        message.image_paths
+          ? message.image_paths.map(async imagePath => {
+              const url = await getMessageImageFromStorage(imagePath)
+
+              if (url) {
+                const response = await fetch(url)
+                const blob = await response.blob()
+                const base64 = await convertBlobToBase64(blob)
+
                 return {
                   messageId: message.id,
                   path: imagePath,
-                  base64: "",
+                  base64,
                   url,
                   file: null
                 }
-              })
-            : []
-      )
+              }
+
+              return {
+                messageId: message.id,
+                path: imagePath,
+                base64: "",
+                url,
+                file: null
+              }
+            })
+          : []
+    )
 
     const images: MessageImage[] = await Promise.all(imagePromises.flat())
     setChatImages(images)

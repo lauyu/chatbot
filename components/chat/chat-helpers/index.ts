@@ -208,16 +208,19 @@ export const handleHostedChat = async (
 
   let draftMessages = await buildFinalMessages(payload, profile, chatImages)
 
-  let formattedMessages : any[] = []
+  let formattedMessages: any[] = []
   if (provider === "google") {
-    formattedMessages = await adaptMessagesForGoogleGemini(payload, draftMessages)
+    formattedMessages = await adaptMessagesForGoogleGemini(
+      payload,
+      draftMessages
+    )
   } else {
     formattedMessages = draftMessages
   }
 
   const apiEndpoint =
     provider === "custom" ? "/api/chat/custom" : `/api/chat/${provider}`
-  console.log("begin fetch chat:"+JSON.stringify(formattedMessages))
+
   const requestBody = {
     chatSettings: payload.chatSettings,
     messages: formattedMessages,

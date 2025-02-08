@@ -154,6 +154,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
 
   const fetchStartingData = async () => {
     const session = (await supabase.auth.getSession()).data.session
+
     if (session) {
       const user = session.user
 

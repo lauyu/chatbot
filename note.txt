@@ -1,0 +1,2 @@
+# supabase的配置
+ Postgres database password=uhOdmiy22j1PDH5k
