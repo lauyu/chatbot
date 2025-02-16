@@ -45,3 +45,4 @@ sw.js.map
 workbox-*.js
 workbox-*.js.map
 /.idea/
+/public/worker-*.js
