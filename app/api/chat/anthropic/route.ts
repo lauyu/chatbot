@@ -5,7 +5,7 @@ import { ChatSettings } from "@/types"
 import Anthropic from "@anthropic-ai/sdk"
 import { AnthropicStream, StreamingTextResponse } from "ai"
 import { NextRequest, NextResponse } from "next/server"
-
+import Selector from "@/lib/chat/appKey-selector"
 export const runtime = "edge"
 
 export async function POST(request: NextRequest) {
@@ -15,11 +15,13 @@ export async function POST(request: NextRequest) {
     messages: any[]
   }
 
+
   try {
     const profile = await getServerProfile()
 
     checkApiKey(profile.anthropic_api_key, "Anthropic")
-
+    const selectedAppKey = await Selector.getInstance().select("Anthropic")
+    console.log("selectedAppKey="+ selectedAppKey)
     let ANTHROPIC_FORMATTED_MESSAGES: any = messages.slice(1)
 
     ANTHROPIC_FORMATTED_MESSAGES = ANTHROPIC_FORMATTED_MESSAGES?.map(
@@ -55,8 +57,9 @@ export async function POST(request: NextRequest) {
       }
     )
 
+    let apiKey = selectedAppKey || profile.anthropic_api_key || ""
     const anthropic = new Anthropic({
-      apiKey: profile.anthropic_api_key || ""
+      apiKey: apiKey
     })
 
     try {
